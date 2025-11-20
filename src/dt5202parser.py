@@ -43,6 +43,7 @@ def dt5202file(filename):
         
         #Spectroscopy mode:
         if acq_mode == 1:
+            #for i in range(2):
             while(1):
                 #Event_Header:
                 buff = f.read(2)
@@ -63,14 +64,17 @@ def dt5202file(filename):
                 trig_id, = s.unpack(f.read(8))
                 chan_mask, = s.unpack(f.read(8))
                 
-                dim = (ev_size - 27) / 6
+                dim = int((ev_size - 27) / 6)
 
                 #Event_Data:
+                ev_num = ev_num + 1
                 for k in range(dim):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
                     LG_PHA, = r.unpack(f.read(2))
                     HG_PHA, = r.unpack(f.read(2))
+                    
+                    print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
                 
 
 
