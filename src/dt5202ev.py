@@ -164,78 +164,78 @@ def dt5202_event(f, acq_mode, time_unit):
         
         return scint
 
-        #Spectro and Timing Mode:
-        if acq_mode == 3:
+    #Spectro and Timing Mode:
+    if acq_mode == 3:
             
-            #Event_Header:
-            buff = f.read(2)
-            if buff == b'':
-                return -1
-            ev_size, = r.unpack(buff)
+        #Event_Header:
+        buff = f.read(2)
+        if buff == b'':
+            return -1
+        ev_size, = r.unpack(buff)
                 
-            buff2 = f.read(1)
-            if buff2 == b'':
-                return -1
-            board_id, = q.unpack(buff2)
+        buff2 = f.read(1)
+        if buff2 == b'':
+            return -1
+        board_id, = q.unpack(buff2)
 
-            buff3 = f.read(8)
-            if buff3 == b'':
-                return -1
-            trig_timestamp, = u.unpack(buff3)
+        buff3 = f.read(8)
+        if buff3 == b'':
+            return -1
+        trig_timestamp, = u.unpack(buff3)
 
-            trig_id, = s.unpack(f.read(8))
-            chan_mask, = s.unpack(f.read(8))
+        trig_id, = s.unpack(f.read(8))
+        chan_mask, = s.unpack(f.read(8))
 
-            #Event_Data: Need to verify this further ....
-            dim = (ev_size - 27) / 16 #hard_coded for the LSB Mode only
-            for i in range(dim):
-                chan_id, = q.unpack(f.read(1))
-                data_type, = q.unpack(f.read(1))
-                LG_PHA, = r.unpack(f.read(2))
-                HG_PHA, = r.unpack(f.read(2))
-                if time_unit == 0:
-                    ToA, = p.unpack(f.read(4))
-                    ToT, = r.unpack(f.read(2))
-                if time_unit == 1:
-                    ToA, = t.unpack(f.read(4))
-                    ToT, = t.unpack(f.read(4))
+        #Event_Data: Need to verify this further ....
+        dim = (ev_size - 27) / 16 #hard_coded for the LSB Mode only
+        for i in range(dim):
+            chan_id, = q.unpack(f.read(1))
+            data_type, = q.unpack(f.read(1))
+            LG_PHA, = r.unpack(f.read(2))
+            HG_PHA, = r.unpack(f.read(2))
+            if time_unit == 0:
+                ToA, = p.unpack(f.read(4))
+                ToT, = r.unpack(f.read(2))
+            if time_unit == 1:
+                ToA, = t.unpack(f.read(4))
+                ToT, = t.unpack(f.read(4))
 
-                scint[chan_id] = [LG_PHA, HG_PHA, ToA, ToT]
+            scint[chan_id] = [LG_PHA, HG_PHA, ToA, ToT]
 
-            return scint
+        return scint
 
-        #Counting Mode:
-        if acq_mode == 4:
+    #Counting Mode:
+    if acq_mode == 4:
                 
-            #Event_Header:
-            buff = f.read(2)
-            if buff == b'':
-                return -1
-            ev_size, = r.unpack(buff)
+        #Event_Header:
+        buff = f.read(2)
+        if buff == b'':
+            return -1
+        ev_size, = r.unpack(buff)
 
-            buff2 = f.read(1)
-            if buff2 == b'':
-                return -1
-            board_id, = q.unpack(buff2)
+        buff2 = f.read(1)
+        if buff2 == b'':
+            return -1
+        board_id, = q.unpack(buff2)
 
-            buff3 = f.read(8)
-            if buff3 == b'':
-                return -1
-            trig_timestamp, = u.unpack(buff3)
+        buff3 = f.read(8)
+        if buff3 == b'':
+            return -1
+        trig_timestamp, = u.unpack(buff3)
 
-            trig_id, = s.unpack(f.read(8))
-            chan_mask, = s.unpack(f.read(8))
+        trig_id, = s.unpack(f.read(8))
+        chan_mask, = s.unpack(f.read(8))
 
-            dim = (ev_size - 27) / 5
+        dim = (ev_size - 27) / 5
                     
-            #Event_Data:
-            for i in range(dim):
-                chan_id, = q.unpack(f.read(1))
-                counts, = p.unpack(f.read(4))
+        #Event_Data:
+        for i in range(dim):
+            chan_id, = q.unpack(f.read(1))
+            counts, = p.unpack(f.read(4))
 
-                scint[chan_id] = counts
+            scint[chan_id] = counts
 
-            return scint
+        return scint
 
 
 if __name__ == "__main__":
@@ -271,8 +271,8 @@ if __name__ == "__main__":
 
 
         fig, ax=plt.subplots(1,2)
-        ax[0].hist(ToA, bins=100,label='ToA')
-        ax[1].hist(ToT, bins=100,label='ToT')
+        ax[0].hist(ToA, bins=200,label='ToA')
+        ax[1].hist(ToT, bins=200,label='ToT')
 
         for i in range(2):
             ax[i].tick_params(direction='in',axis='both',which='major',bottom='True',left='True',top='True',right='True',length=9,width=0.75)
@@ -281,9 +281,9 @@ if __name__ == "__main__":
             ax[i].yaxis.set_minor_locator(tck.AutoMinorLocator(n=5))
             ax[i].legend()
 
-            ax[i].set_xlim(left=0)
             ax[i].set_ylabel('counts')
-
+        ax[0].set_xlim(0,4096)
+        ax[1].set_xlim(0,200)
         ax[0].set_xlabel('Time of Arrival (LSB)')
         ax[1].set_xlabel('Time over Threshold (LSB)')
         plt.show()
