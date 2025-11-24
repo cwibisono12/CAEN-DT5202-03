@@ -191,16 +191,108 @@ def dt5202_event(f, acq_mode, time_unit):
         for i in range(dim):
             chan_id, = q.unpack(f.read(1))
             data_type, = q.unpack(f.read(1))
-            LG_PHA, = r.unpack(f.read(2))
-            HG_PHA, = r.unpack(f.read(2))
-            if time_unit == 0:
-                ToA, = p.unpack(f.read(4))
-                ToT, = r.unpack(f.read(2))
-            if time_unit == 1:
-                ToA, = t.unpack(f.read(4))
-                ToT, = t.unpack(f.read(4))
+            if data_type == 1:
+                LG_PHA, = r.unpack(f.read(2))
+                scint[chan_id] = [LG_PHA]
+            
+            if data_type == 2:
+                HG_PHA, = r.unpack(f.read(2))
+                scint[chan_id] = [HG_PHA]
+                
+            if data_type == 3:
+                LG_PHA, = r.unpack(f.read(2))
+                HG_PHA, = r.unpack(f.read(2))
+                scint[chan_id] = [LG_PHA, HG_PHA]
+                
+            if data_type == 10:
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))               
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                scint[chan_id] = [ToA]
+                
+            if data_type == 20:
+                if time_unit == 0:
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [ToT]
+                
+            if data_type == 11:
+                LG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                scint[chan_id] = [LG_PHA, ToA]
 
-            scint[chan_id] = [LG_PHA, HG_PHA, ToA, ToT]
+            if data_type == 12:
+                HG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                scint[chan_id] = [HG_PHA, ToA]
+                
+                   
+                   
+            if data_type == 21:
+                LG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [LG_PHA, ToT]
+
+            
+            if data_type == 22:
+                HG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [HG_PHA, ToT]
+            
+            
+            if data_type == 30:
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [ToA, ToT]
+            
+            if data_type == 31:
+                LG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [LG_PHA, ToA, ToT]
+            
+            if data_type == 32:
+                HG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [HG_PHA, ToA, ToT]
+            
+            if data_type == 33:
+                LG_PHA, = r.unpack(f.read(2))
+                HG_PHA, = r.unpack(f.read(2))
+                if time_unit == 0:
+                    ToA, = p.unpack(f.read(4))
+                    ToT, = r.unpack(f.read(2))
+                if time_unit == 1:
+                    ToA, = t.unpack(f.read(4))
+                    ToT, = t.unpack(f.read(4))
+                scint[chan_id] = [LG_PHA, HG_PHA, ToA, ToT]
 
         return scint
 
@@ -226,10 +318,10 @@ def dt5202_event(f, acq_mode, time_unit):
         trig_id, = s.unpack(f.read(8))
         chan_mask, = s.unpack(f.read(8))
 
-        dim = (ev_size - 27) / 5
+        #dim = (ev_size - 27) / 5
                     
         #Event_Data:
-        for i in range(dim):
+        for i in range(64):
             chan_id, = q.unpack(f.read(1))
             counts, = p.unpack(f.read(4))
 

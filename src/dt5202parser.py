@@ -129,6 +129,7 @@ def dt5202file(filename):
 
         #Spectro and Timing Mode:
         if acq_mode == 3:
+            #for i in range(3):
             while(1):
                 #Event_Header:
                 buff = f.read(2)
@@ -149,49 +150,138 @@ def dt5202file(filename):
                 trig_id, = s.unpack(f.read(8))
                 chan_mask, = s.unpack(f.read(8))
 
+                ev_num = ev_num + 1
                 #Event_Data: Need to verify this further ....
-                dim = (ev_size - 27) / 16 #hard_coded for the LSB Mode only
-                for i in range(dim):
+                #dim = int((ev_size - 27) / 16) #hard_coded for the LSB Mode only
+                
+                
+                #Looks like in this mode, iteration is done with the number of channels for each board
+                #Independent with the DAQ parameters.
+                for i in range(64):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
-                    LG_PHA, = r.unpack(f.read(2))
-                    HG_PHA, = r.unpack(f.read(2))
-                    if time_unit == 0:
-                        ToA, = p.unpack(f.read(4))
-                        ToT, = r.unpack(f.read(2))
-                    if time_unit == 1:
-                        ToA, = t.unpack(f.read(4))
-                        ToT, = t.unpack(f.read(4))
+                    
+                    if data_type == 1:
+                        LG_PHA, = r.unpack(f.read(2))
+                    
+                    if data_type == 2:
+                        HG_PHA, = r.unpack(f.read(2))
 
-            #Counting Mode:
-            if acq_mode == 4:
-                while(1):
-                    #Event_Header:
-                    buff = f.read(2)
-                    if buff == b'':
-                        break
-                    ev_size, = r.unpack(buff)
+                    if data_type == 3:
+                        LG_PHA, = r.unpack(f.read(2))
+                        HG_PHA, = r.unpack(f.read(2))
+                    if data_type == 10:
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                    if data_type == 20:
+                        if time_unit == 0:
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToT, = t.unpack(f.read(4))
 
-                    buff2 = f.read(1)
-                    if buff2 == b'':
-                        break
-                    board_id, = q.unpack(buff2)
-
-                    buff3 = f.read(8)
-                    if buff3 == b'':
-                        break
-                    trig_timestamp, = u.unpack(buff3)
-
-                    trig_id, = s.unpack(f.read(8))
-                    chan_mask, = s.unpack(f.read(8))
-
-                    dim = (ev_size - 27) / 5
-                    #Event_Data:
-                    for i in range(dim):
-                        chan_id, = q.unpack(f.read(1))
-                        counts, = p.unpack(f.read(4))
+                    if data_type == 11:
+                        LG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
 
 
+                    if data_type == 12:
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+
+
+                    if data_type == 21:
+                        LG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToT, = t.unpack(f.read(4))
+                        
+                    if data_type == 22:
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToT, = t.unpack(f.read(4))
+
+                    if data_type == 30:
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                            ToT, = t.unpack(f.read(4))
+
+                    if data_type == 31:
+                        LG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                            ToT, = t.unpack(f.read(4))
+                    
+                    if data_type == 32:
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                            ToT, = t.unpack(f.read(4))
+
+
+                    if data_type == 33:
+                        LG_PHA, = r.unpack(f.read(2))
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                            ToT, = t.unpack(f.read(4))
+                    
+                    #if data_type != 3: 
+                    print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type) 
+           
+
+        #Counting Mode:
+        if acq_mode == 4:
+            while(1):
+                #Event_Header:
+                buff = f.read(2)
+                if buff == b'':
+                    break
+                ev_size, = r.unpack(buff)
+
+                buff2 = f.read(1)
+                if buff2 == b'':
+                    break
+                board_id, = q.unpack(buff2)
+
+                buff3 = f.read(8)
+                if buff3 == b'':
+                    break
+                trig_timestamp, = u.unpack(buff3)
+
+                trig_id, = s.unpack(f.read(8))
+                chan_mask, = s.unpack(f.read(8))
+
+                #dim = int((ev_size - 27) / 5)
+                #Event_Data:
+                ev_num = ev_num + 1
+                for i in range(64):
+                    chan_id, = q.unpack(f.read(1))
+                    counts, = p.unpack(f.read(4))
+
+                    print("ev_num:",ev_num,"chan_id:",chan_id,"counts:",counts)
 
 if __name__ == "__main__":
     import sys
