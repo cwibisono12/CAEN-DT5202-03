@@ -43,7 +43,7 @@ def dt5202file(filename):
         
         #Spectroscopy mode:
         if acq_mode == 1:
-            #for i in range(2):
+            #for i in range(6700):
             while(1):
                 #Event_Header:
                 buff = f.read(2)
@@ -71,8 +71,13 @@ def dt5202file(filename):
                 for k in range(dim):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
-                    LG_PHA, = r.unpack(f.read(2))
-                    HG_PHA, = r.unpack(f.read(2))
+                    if data_type == 1:
+                        LG_PHA, = r.unpack(f.read(2))
+                    if data_type == 2:
+                        HG_PHA, = r.unpack(f.read(2))
+                    if data_type == 3:
+                        LG_PHA, = r.unpack(f.read(2))
+                        HG_PHA, = r.unpack(f.read(2))
                     
                     print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
                 
@@ -107,29 +112,46 @@ def dt5202file(filename):
                 for i in range(num_hits):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
-                    b_counts = b_counts+2
-                    if time_unit == 0:
-                        ToA, = p.unpack(f.read(4))
-                        ToT, = r.unpack(f.read(2))
-                        b_counts = b_counts + 6
-                    if time_unit == 1:
-                        ToA, = t.unpack(f.read(4))
-                        ToT, = t.unpack(f.read(4))
-                        b_counts = b_counts + 8
-                    
-                    print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type,"ToA:",ToA,"ToT:",ToT) 
+                    #b_counts = b_counts+2
+                    if data_type == 16: #0x10
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                        #    ToT, = r.unpack(f.read(2))
+                      #  b_counts = b_counts + 6
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
+                         #   ToT, = t.unpack(f.read(4))
+                       # b_counts = b_counts + 8
+                        print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type,"ToA:",ToA)
+
+                    if data_type == 32: #0x20
+                        if time_unit == 0:
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToT, = t.unpack(f.read(4))
+                        print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type,"ToT:",ToT) 
+
+                    if data_type == 48: #0x30
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToA, = p.unpack(f.read(4))
+                            ToT, = t.unpack(f.read(4))
+
+                        print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type,"ToA:",ToA,"ToT:",ToT) 
     
             
-                flag_check = b_counts
-                flag_check_comp = ev_size - 13
+                #flag_check = b_counts
+                #flag_check_comp = ev_size - 13
                 #print("flag_check:",flag_check,"flag_check_comp:",flag_check_comp)
-                if flag_check != flag_check_comp:
-                    break
+                #if flag_check != flag_check_comp:
+                 #   break
             
 
         #Spectro and Timing Mode:
         if acq_mode == 3:
-            #for i in range(3):
+            #for i in range(20):
             while(1):
                 #Event_Header:
                 buff = f.read(2)
@@ -160,7 +182,8 @@ def dt5202file(filename):
                 for i in range(64):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
-                    
+
+
                     if data_type == 1:
                         LG_PHA, = r.unpack(f.read(2))
                     
@@ -170,18 +193,19 @@ def dt5202file(filename):
                     if data_type == 3:
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
-                    if data_type == 10:
+                 
+                    if data_type == 16: #0x10
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
-                    if data_type == 20:
+                    if data_type == 32: #0x20
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
 
-                    if data_type == 11:
+                    if data_type == 17: #0x11
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
@@ -189,29 +213,44 @@ def dt5202file(filename):
                             ToA, = t.unpack(f.read(4))
 
 
-                    if data_type == 12:
+                    if data_type == 18: #0x12
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
 
+                    if data_type == 19: #0x13
+                        LG_PHA, = r.unpack(f.read(2))
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToA, = p.unpack(f.read(4))
+                        if time_unit == 1:
+                            ToA, = t.unpack(f.read(4))
 
-                    if data_type == 21:
+                    if data_type == 33: #0x21
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
                         
-                    if data_type == 22:
+                    if data_type == 34: #0x22
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
 
-                    if data_type == 30:
+                    if data_type == 35: #0x23
+                        LG_PHA, = r.unpack(f.read(2))
+                        HG_PHA, = r.unpack(f.read(2))
+                        if time_unit == 0:
+                            ToT, = r.unpack(f.read(2))
+                        if time_unit == 1:
+                            ToT, = t.unpack(f.read(4))
+
+                    if data_type == 48: #0x30
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                             ToT, = r.unpack(f.read(2))
@@ -219,7 +258,7 @@ def dt5202file(filename):
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
 
-                    if data_type == 31:
+                    if data_type == 49: #0x31
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
@@ -228,7 +267,7 @@ def dt5202file(filename):
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
                     
-                    if data_type == 32:
+                    if data_type == 50: #0x32
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
@@ -238,7 +277,7 @@ def dt5202file(filename):
                             ToT, = t.unpack(f.read(4))
 
 
-                    if data_type == 33:
+                    if data_type == 51: #0x33
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
@@ -247,7 +286,9 @@ def dt5202file(filename):
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
-                    
+
+                   # else:
+                    #    continue
                     #if data_type != 3: 
                     print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type) 
            
