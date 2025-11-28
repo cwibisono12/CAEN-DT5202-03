@@ -107,14 +107,14 @@ def dt5202_event(f, acq_mode, time_unit):
             data_type, = q.unpack(f.read(1))
             if data_type == 1:
                 LG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [LG_PHA]      
+                scint[chan_id] = [[LG_PHA], data_type]     
             if data_type == 2:
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [HG_PHA]      
+                scint[chan_id] = [[HG_PHA], data_type]      
             if data_type == 3:
                 LG_PHA, = r.unpack(f.read(2))
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [LG_PHA, HG_PHA]      
+                scint[chan_id] = [[LG_PHA, HG_PHA], data_type]      
             #print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
              
         return scint
@@ -217,30 +217,30 @@ def dt5202_event(f, acq_mode, time_unit):
             data_type, = q.unpack(f.read(1))
             if data_type == 1:
                 LG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [LG_PHA]
+                scint[chan_id] = [[LG_PHA], data_type]
             
             if data_type == 2:
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [HG_PHA]
+                scint[chan_id] = [[HG_PHA], data_type]
                 
             if data_type == 3:
                 LG_PHA, = r.unpack(f.read(2))
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [LG_PHA, HG_PHA]
+                scint[chan_id] = [[LG_PHA, HG_PHA], data_type]
                 
             if data_type == 16: #0x10
                 if time_unit == 0:
                     ToA, = p.unpack(f.read(4))               
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
-                scint[chan_id] = [ToA]
+                scint[chan_id] = [[ToA], data_type]
                 
             if data_type == 32: #0x20
                 if time_unit == 0:
                     ToT, = r.unpack(f.read(2))
                 if time_unit == 1:
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [ToT]
+                scint[chan_id] = [[ToT], data_type]
                 
             if data_type == 17: #0x11
                 LG_PHA, = r.unpack(f.read(2))
@@ -248,7 +248,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToA, = p.unpack(f.read(4))
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, ToA]
+                scint[chan_id] = [[LG_PHA, ToA], data_type]
 
             if data_type == 18: #0x12
                 HG_PHA, = r.unpack(f.read(2))
@@ -256,7 +256,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToA, = p.unpack(f.read(4))
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
-                scint[chan_id] = [HG_PHA, ToA]
+                scint[chan_id] = [[HG_PHA, ToA], data_type]
                 
                   
             if data_type == 19: #0x13
@@ -266,7 +266,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToA, = p.unpack(f.read(4))
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, HG_PHA, ToA]
+                scint[chan_id] = [[LG_PHA, HG_PHA, ToA], data_type]
                    
             if data_type == 33: #0x21
                 LG_PHA, = r.unpack(f.read(2))
@@ -274,7 +274,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToT, = r.unpack(f.read(2))
                 if time_unit == 1:
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, ToT]
+                scint[chan_id] = [[LG_PHA, ToT], data_type]
 
             
             if data_type == 34: #0x22
@@ -283,7 +283,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToT, = r.unpack(f.read(2))
                 if time_unit == 1:
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [HG_PHA, ToT]
+                scint[chan_id] = [[HG_PHA, ToT], data_type]
             
            
             if data_type == 35: #0x23
@@ -293,7 +293,7 @@ def dt5202_event(f, acq_mode, time_unit):
                     ToT, = r.unpack(f.read(2))
                 if time_unit == 1:
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, HG_PHA, ToT]     
+                scint[chan_id] = [[LG_PHA, HG_PHA, ToT], data_type]     
 
             if data_type == 48: #0x30
                 if time_unit == 0:
@@ -302,7 +302,7 @@ def dt5202_event(f, acq_mode, time_unit):
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [ToA, ToT]
+                scint[chan_id] = [[ToA, ToT], data_type]
             
             if data_type == 49: #0x31
                 LG_PHA, = r.unpack(f.read(2))
@@ -312,7 +312,7 @@ def dt5202_event(f, acq_mode, time_unit):
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, ToA, ToT]
+                scint[chan_id] = [[LG_PHA, ToA, ToT], data_type]
             
             if data_type == 50: #0x32
                 HG_PHA, = r.unpack(f.read(2))
@@ -322,7 +322,7 @@ def dt5202_event(f, acq_mode, time_unit):
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [HG_PHA, ToA, ToT]
+                scint[chan_id] = [[HG_PHA, ToA, ToT], data_type]
             
             if data_type == 51: #0x33
                 LG_PHA, = r.unpack(f.read(2))
@@ -333,7 +333,7 @@ def dt5202_event(f, acq_mode, time_unit):
                 if time_unit == 1:
                     ToA, = t.unpack(f.read(4))
                     ToT, = t.unpack(f.read(4))
-                scint[chan_id] = [LG_PHA, HG_PHA, ToA, ToT]
+                scint[chan_id] = [[LG_PHA, HG_PHA, ToA, ToT], data_type]
 
         return scint
 
