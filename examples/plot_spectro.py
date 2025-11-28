@@ -14,7 +14,8 @@ if __name__ == "__main__":
     #from the spectroscopy mode for a specific channel id :
     filein = sys.argv[1]
     bin_number = int(sys.argv[2])
-    
+    chan_id = int(sys.argv[3]) #ex. 4 or 5
+
     plt.rcParams['font.family'] = 'serif'
     plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
     plt.rcParams['figure.dpi'] = 200
@@ -36,15 +37,15 @@ if __name__ == "__main__":
                 break
             else:
                 for i in temp.keys():
-                    if i == 4 and temp[4][1] == 1:
-                        LG.append(temp[4][0][0])
+                    if i == chan_id and temp[i][1] == 1:
+                        LG.append(temp[i][0][0])
 
-                    if i == 4 and temp[4][1] == 2:
-                        HG.append(temp[4][0][1])
+                    if i == chan_id and temp[i][1] == 2:
+                        HG.append(temp[i][0][1])
 
-                    if i == 4 and temp[4][1] == 3:
-                        LG.append(temp[4][0][0])
-                        HG.append(temp[4][0][1])
+                    if i == chan_id and temp[i][1] == 3:
+                        LG.append(temp[i][0][0])
+                        HG.append(temp[i][0][1])
 
 
         fig, ax=plt.subplots(1,2)

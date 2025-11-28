@@ -12,8 +12,11 @@ if __name__ == "__main__":
 
     #Below is an example to generate the Time of Arrival and Time over Threshold spectra
     #in the least significant bit from the timing mode for a specific channel id :
-    filein = sys.argv[1]
-    
+    filein = sys.argv[1] 
+    bin_number = int(sys.argv[2]) #ex.200
+    chan_id = int(sys.argv[3]) #ex. 4 or 5
+
+
     plt.rcParams['font.family'] = 'serif'
     plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
     plt.rcParams['figure.dpi'] = 200
@@ -35,20 +38,20 @@ if __name__ == "__main__":
                 break
             else:
                 for i in temp.keys():
-                    if temp[i][1] == 16 and i == 4:
-                        ToA.append(temp[4][0][0])
+                    if temp[i][1] == 16 and i == chan_id:
+                        ToA.append(temp[i][0][0])
 
-                    if temp[i][1] == 32 and i == 4:
-                        ToT.append(temp[4][0][0])
+                    if temp[i][1] == 32 and i == chan_id:
+                        ToT.append(temp[i][0][0])
 
-                    if temp[i][1] == 48 and i == 4:
-                        ToA.append(temp[4][0][0])
-                        ToT.append(temp[4][0][1])
+                    if temp[i][1] == 48 and i == chan_id:
+                        ToA.append(temp[i][0][0])
+                        ToT.append(temp[i][0][1])
 
 
         fig, ax=plt.subplots(1,2)
-        ax[0].hist(ToA, bins=200,label='ToA')
-        ax[1].hist(ToT, bins=200,label='ToT')
+        ax[0].hist(ToA, bins=bin_number,label='ToA')
+        ax[1].hist(ToT, bins=bin_number,label='ToT')
 
         for i in range(2):
             ax[i].tick_params(direction='in',axis='both',which='major',bottom='True',left='True',top='True',right='True',length=9,width=0.75)
