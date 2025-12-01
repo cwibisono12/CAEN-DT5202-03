@@ -40,26 +40,26 @@ if __name__ == "__main__":
                     if temp[i][1] == 16 and i == chan_id:
                         ToA.append(temp[i][0][0])
 
-                    if (temp[i][1] == 17 or temp[i][1] == 18 or temp[i][1] == 49 or temp[i][1] == 50)  and i == 5:
+                    if (temp[i][1] == 17 or temp[i][1] == 18 or temp[i][1] == 49 or temp[i][1] == 50)  and i == chan_id:
                         ToA.append(temp[i][0][1])
 
-                    if temp[i][1] == 19 and i == 5:
+                    if temp[i][1] == 19 and i == chan_id:
                         ToA.append(temp[i][0][2])
 
-                    if temp[i][1] == 32 and i == 5:
+                    if temp[i][1] == 32 and i == chan_id:
                         ToT.append(temp[i][0][0])
 
-                    if (temp[i][1] == 33 or temp[i][1] == 34) and i == 5:
+                    if (temp[i][1] == 33 or temp[i][1] == 34) and i == chan_id:
                         ToT.append(temp[i][0][1])
 
-                    if (temp[i][1] == 35 or temp[i][1] == 49 or temp[i] == 50) and i == 5:
+                    if (temp[i][1] == 35 or temp[i][1] == 49 or temp[i] == 50) and i == chan_id:
                         ToT.append(temp[i][0][2])
 
-                    if temp[i][1] == 48 and i == 5:
+                    if temp[i][1] == 48 and i == chan_id:
                         ToA.append(temp[i][0][0])
                         ToT.append(temp[i][0][1])
 
-                    if temp[i][1] == 51 and i == 5:
+                    if temp[i][1] == 51 and i == chan_id:
                         ToA.append(temp[i][0][2])
                         ToT.append(temp[i][0][3])
 

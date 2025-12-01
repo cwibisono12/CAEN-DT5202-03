@@ -97,26 +97,32 @@ def dt5202_event(f, acq_mode, time_unit):
         trig_id, = s.unpack(f.read(8))
         chan_mask, = s.unpack(f.read(8))
                 
-        dim = int((ev_size - 27) / 6)
-
+        #dim = int((ev_size - 27) / 6)
+        dim = ev_size - 27
         
         #Event_Data:
         ev_num = ev_num + 1
-        for k in range(dim):
+        #for k in range(dim):
+        while(1):
+            if dim == 0:
+                break
             chan_id, = q.unpack(f.read(1))
             data_type, = q.unpack(f.read(1))
             if data_type == 1:
                 LG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [[LG_PHA], data_type]     
+                scint[chan_id] = [[LG_PHA], data_type] 
+                dim = dim - 4
             if data_type == 2:
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [[HG_PHA], data_type]      
+                scint[chan_id] = [[HG_PHA], data_type] 
+                dim = dim - 4
             if data_type == 3:
                 LG_PHA, = r.unpack(f.read(2))
                 HG_PHA, = r.unpack(f.read(2))
-                scint[chan_id] = [[LG_PHA, HG_PHA], data_type]      
+                scint[chan_id] = [[LG_PHA, HG_PHA], data_type]    
+                dim = dim - 6
             #print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
-             
+
         return scint
 
 
