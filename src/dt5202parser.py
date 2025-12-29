@@ -68,14 +68,21 @@ def dt5202file(filename):
                 dim = ev_size - 27
                 #Event_Data:
                 ev_num = ev_num + 1
-
+                print("ev_num:",ev_num,"ev_size:",ev_size,"board_id:",board_id,"trig_id:",trig_id,"chan_mask:",chan_mask)
+                flag_hit = 0
                 while(1):
                 #for k in range(dim):
                     if dim == 0:
                         break
-                    chan_id, = q.unpack(f.read(1))
-                    data_type, = q.unpack(f.read(1))
-
+                    buff_chan = f.read(1)
+                    if buff_chan == b'':
+                        return 1
+                    chan_id, = q.unpack(buff_chan)
+                    buff_data_type = f.read(1)
+                    if buff_data_type == b'':
+                        return 1
+                    data_type, = q.unpack(buff_data_type)
+                    flag_hit = flag_hit + 1
                     if data_type == 1:
                         LG_PHA, = r.unpack(f.read(2))
                         dim = dim - 4
@@ -88,30 +95,33 @@ def dt5202file(filename):
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
                         dim = dim - 6
-                        #print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
+                        print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
                     #if dim == 0:
                      #   break
 
+                if flag_hit > 1:
+                    print("found more than one hits per event")
 
 
         #Timing Mode:
         if acq_mode == 2:
+            #for i in range(5):
             while(1):
                 #Event_Header:
                 b_counts = 0
                 buff = f.read(2)
                 if buff == b'':
-                    return 1
+                    break
                 ev_size, = r.unpack(buff)
             
                 buff2 = f.read(1)
                 if buff2 == b'':
-                    return 1
+                    break
                 board_id, = q.unpack(buff2)
 
                 buff3 = f.read(8)
                 if buff3 == b'':
-                    return 1
+                    break
                 tref, = u.unpack(buff3)
 
                 num_hits, = r.unpack(f.read(2))
@@ -185,107 +195,137 @@ def dt5202file(filename):
                 ev_num = ev_num + 1
                 #Event_Data: Need to verify this further ....
                 #dim = int((ev_size - 27) / 16) #hard_coded for the LSB Mode only
-                
+                dim = ev_size - 27 
                 
                 #Looks like in this mode, iteration is done with the number of channels for each board
                 #Independent with the DAQ parameters.
+                #while(1):
+                   # if dim == 0:
+                    #    break
                 for i in range(64):
                     chan_id, = q.unpack(f.read(1))
                     data_type, = q.unpack(f.read(1))
 
-
                     if data_type == 1:
                         LG_PHA, = r.unpack(f.read(2))
-                    
+                        #dim = dim - 4
+
                     if data_type == 2:
                         HG_PHA, = r.unpack(f.read(2))
+                        #dim = dim - 4
 
                     if data_type == 3:
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
-                 
+                        #dim = dim - 6
+
                     if data_type == 16: #0x10
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
+                            #dim = dim - 6
+
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
+                            #dim = dim - 6
+
                     if data_type == 32: #0x20
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 4
+
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
+                            #dim = dim - 6
 
                     if data_type == 17: #0x11
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
+                            #dim = dim - 8
+
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
-
+                            #dim = dim - 8
 
                     if data_type == 18: #0x12
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
+                            #dim = dim - 8
+
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
+                            #dim = dim - 8
 
                     if data_type == 19: #0x13
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
+                            #dim = dim - 10
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
+                            #dim = dim - 10
 
                     if data_type == 33: #0x21
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 6
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
-                        
+                            #dim = dim - 8
+
                     if data_type == 34: #0x22
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 6
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
+                            #dim = dim - 8
 
                     if data_type == 35: #0x23
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 8
                         if time_unit == 1:
                             ToT, = t.unpack(f.read(4))
+                            #dim = dim - 10
 
                     if data_type == 48: #0x30
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 8
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
+                            #dim = dim - 10
 
                     if data_type == 49: #0x31
                         LG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 10
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
-                    
+                            #dim = dim - 12
+
                     if data_type == 50: #0x32
                         HG_PHA, = r.unpack(f.read(2))
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 10
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
-
+                            #dim = dim - 12
 
                     if data_type == 51: #0x33
                         LG_PHA, = r.unpack(f.read(2))
@@ -293,13 +333,15 @@ def dt5202file(filename):
                         if time_unit == 0:
                             ToA, = p.unpack(f.read(4))
                             ToT, = r.unpack(f.read(2))
+                            #dim = dim - 12
                         if time_unit == 1:
                             ToA, = t.unpack(f.read(4))
                             ToT, = t.unpack(f.read(4))
+                            #dim = dim - 14
 
                    # else:
                     #    continue
-                    #if data_type != 3: 
+                    #if data_type > 51: 
                     print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type) 
            
 
