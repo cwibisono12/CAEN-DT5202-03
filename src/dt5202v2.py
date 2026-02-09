@@ -115,22 +115,34 @@ def dt5202_event(f, acq_mode, time_unit):
                 return -1
             data_type, = q.unpack(buff_data_type)
             if data_type == 1:
-                LG_PHA, = r.unpack(f.read(2))
+                buff_lg_pha = f.read(2)
+                if buff_lg_pha == b'':
+                    return -1
+                LG_PHA, = r.unpack(buff_lg_pha)
                 if chan_id in scint.keys():
                     pass
                 else:
                     scint[chan_id] = [[LG_PHA], data_type] 
                 dim = dim - 4
             if data_type == 2:
-                HG_PHA, = r.unpack(f.read(2))
+                buff_hg_pha = f.read(2)
+                if buff_hg_pha == b'':
+                    return -1
+                HG_PHA, = r.unpack(buff_hg_pha)
                 if chan_id in scint.keys():
                     pass
                 else:
                     scint[chan_id] = [[HG_PHA], data_type] 
                 dim = dim - 4
             if data_type == 3:
-                LG_PHA, = r.unpack(f.read(2))
-                HG_PHA, = r.unpack(f.read(2))
+                buff_lg_pha = f.read(2)
+                if buff_lg_pha == b'':
+                    return -1
+                buff_hg_pha = f.read(2)
+                if buff_hg_pha == b'':
+                    return -1
+                LG_PHA, = r.unpack(buff_lg_pha)
+                HG_PHA, = r.unpack(buff_hg_pha)
                 if chan_id in scint.keys():
                     pass
                 else:

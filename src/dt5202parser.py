@@ -68,7 +68,7 @@ def dt5202file(filename):
                 dim = ev_size - 27
                 #Event_Data:
                 ev_num = ev_num + 1
-                print("ev_num:",ev_num,"ev_size:",ev_size,"board_id:",board_id,"trig_id:",trig_id,"chan_mask:",chan_mask)
+                print("ev_num:",ev_num,"ev_size:",ev_size,"board_id:",board_id,"trig_id:",trig_id,"trig_ts:",trig_timestamp,"chan_mask:",chan_mask)
                 flag_hit = 0
                 while(1):
                 #for k in range(dim):
@@ -86,21 +86,22 @@ def dt5202file(filename):
                     if data_type == 1:
                         LG_PHA, = r.unpack(f.read(2))
                         dim = dim - 4
-                        print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA)
+                       # print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA)
                     if data_type == 2:
                         HG_PHA, = r.unpack(f.read(2))
                         dim = dim - 4
-                        print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type,"HG_PHA:", HG_PHA)
+                        #print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type,"HG_PHA:", HG_PHA)
                     if data_type == 3:
                         LG_PHA, = r.unpack(f.read(2))
                         HG_PHA, = r.unpack(f.read(2))
                         dim = dim - 6
-                        print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
+                        #if LG_PHA > 10:
+                         #   print("ev_num:",ev_num, "chan_id:", chan_id, "data_type:", data_type, "LG_PHA:", LG_PHA, "HG_PHA:", HG_PHA)
                     #if dim == 0:
                      #   break
 
-                if flag_hit > 1:
-                    print("found more than one hits per event")
+                #if flag_hit > 1:
+                    #print("found more than one hits per event")
 
 
         #Timing Mode:
@@ -341,7 +342,7 @@ def dt5202file(filename):
 
                    # else:
                     #    continue
-                    #if data_type > 51: 
+                    #if data_type != 3: 
                     print("ev_num:",ev_num,"chan_id:",chan_id,"data_type:",data_type) 
            
 

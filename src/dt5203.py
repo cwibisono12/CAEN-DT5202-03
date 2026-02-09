@@ -194,7 +194,7 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
             if meas_mode == 1:
                 scint[chan_id] = [[ToA, ToT], meas_mode, edge, acq_mode]
             else:
-                scint[chan_id] = [[ToA], edge, meas_mode, edge, acq_mode]
+                scint[chan_id] = [[ToA], meas_mode, edge, acq_mode]
             
         return scint
 
