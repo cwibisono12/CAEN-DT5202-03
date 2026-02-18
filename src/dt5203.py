@@ -94,7 +94,7 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
         #Event_Header:
         buff = f.read(2)
         if buff == b'':
-            return -1
+            return acq_mode, -1
         
         ev_size, = r.unpack(buff)
         if time_unit == 0:
@@ -134,7 +134,7 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
         #Event_Header:
         buff = f.read(2)
         if buff == b'':
-            return -1
+            return acq_mode, -1
         
         ev_size, = r.unpack(buff)
         if time_unit == 0:
@@ -173,7 +173,8 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
         #Event_Header:
         buff = f.read(2)
         if buff == b'':
-            return -1
+            return acq_mode, -1
+
         ev_size, = r.unpack(buff)
                 
         if time_unit == 0:
