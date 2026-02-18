@@ -65,8 +65,10 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
     time_unit: time_unit
     meas_mode: measurement mode
 
-    Return:
-    scint: (dict) data object dictionary
+    Return(s):
+    scint: (dict) data object dictionary (if acq_mode == 2 or 18)
+    scint_arr: (arr) array data object (if acq_mode == 50 or 34)
+    acq_mode: (int) acquisition mode
     '''
 
     p = Struct("@I") #Unsigned Integer (4 bytes)
@@ -80,7 +82,11 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
     #Data: (each list mode consists of event header and event itself)
     ev_num = 0
         
-    scint = {}
+    scint = {}  #data object for the common start or stop mode only
+    scint_arr = [] #data object to accomodate trigger matching mode, and streaming mode
+    
+    for i in range(64):
+        scint_arr.append([])
 
     #Common Start/Stop mode: (for relative measurement mode only)
     if acq_mode == 2 or acq_mode == 18: #2: Common Start Mode; 18: Common Stop Mode
@@ -114,11 +120,11 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
                     ToT, = t.unpack(f.read(4))
 
             if meas_mode != 1:
-                scint[chan_id] = [[ToA, ToT], meas_mode, acq_mode]
+                scint[chan_id] = [[ToA, ToT], meas_mode]
             else:
-                scint[chan_id] = [[ToA], meas_mode, acq_mode]
+                scint[chan_id] = [[ToA], meas_mode]
 
-        return scint
+        return acq_mode, scint
 
 
 
@@ -154,12 +160,12 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
 
 
             if meas_mode != 1:
-                scint[chan_id] = [[ToA, ToT], meas_mode, edge, acq_mode]
+                scint_arr[chan_id].append([ToA, ToT, meas_mode, edge])
             else:
-                scint[chan_id] = [[ToA], edge, meas_mode, edge, acq_mode]
+                scint_arr[chan_id].append([ToA,  meas_mode, edge])
 
 
-        return scint
+        return acq_mode, scint_arr
 
     #Streaming Mode: (works for all measurement modes)
     if acq_mode == 34: #0x22
@@ -192,11 +198,11 @@ def dt5203_event(f, acq_mode, time_unit, meas_mode):
 
 
             if meas_mode == 1:
-                scint[chan_id] = [[ToA, ToT], meas_mode, edge, acq_mode]
+                scint_arr[chan_id].append([ToA, ToT, meas_mode, edge])
             else:
-                scint[chan_id] = [[ToA], meas_mode, edge, acq_mode]
+                scint_arr[chan_id].append([ToA, meas_mode, edge])
             
-        return scint
+        return acq_mode, scint_arr
 
 
 
